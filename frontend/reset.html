@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EmoSync - Redefinir Senha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style type="text/tailwindcss">
+    :root { --primary-color: #3d99f5; }
+    body { font-family: 'Spline Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50" data-page="reset">
+  <div class="min-h-screen flex items-center justify-center px-6">
+    <div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6">
+      <h1 class="text-3xl font-bold text-gray-800 text-center">Redefinir Senha</h1>
+      <p class="text-gray-500 text-center">Digite seu e-mail para receber as instruções de redefinição.</p>
+
+      <form class="space-y-4" id="reset-form">
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
+          <input type="email" id="email" name="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]" required>
+        </div>
+        <button type="submit" class="w-full py-2 px-4 bg-[var(--primary-color)] hover:bg-blue-700 text-white rounded-md shadow">Enviar</button>
+      </form>
+
+      <p class="text-center text-sm text-gray-500">
+        Lembrou sua senha?
+        <a href="/frontend/login.html" class="text-[var(--primary-color)] hover:underline">Entrar</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="js/app.js?v=1.0"></script>
+
+</body>
+</html>
