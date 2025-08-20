@@ -1,6 +1,5 @@
 # Sistema de Análise de Sentimentos — MVP
 
-
 envio de link da postagem e um fluxo de **análise mock** (pode plugar uma API real depois).
 
 > **Stack**: Python 3.11+, FastAPI, SQLAlchemy, JWT, SQLite (dev), HTTPX (para chamadas a APIs), Uvicorn.
@@ -48,19 +47,33 @@ por uma integração real (e.g., AWS Comprehend, Google Cloud Natural Language, 
 
 ```
 app/
-  main.py            # cria FastAPI e inclui rotas
-  config.py          # configurações (SECRET_KEY, DB, etc.)
-  database.py        # engine e SessionLocal
-  models.py          # SQLAlchemy models (User, PostAnalysis, Comment)
-  schemas.py         # Pydantic schemas
-  auth.py            # utilitários de auth (hash, JWT)
-  deps.py            # dependências (get_db, get_current_user)
-  routers/
-    users.py         # /auth/register e /auth/login
-    posts.py         # /posts/analyze
-    analysis.py      # /analysis/{id}
-  services/
-    sentiment.py     # provedor de sentimento (mock + interface)
+  controller/        # pasta com os arquivos de requisições, chama serviços, retorna respostas ou views
+    analysis.py      
+    posts.py         
+    users.py         
+  model/             # pasta com os arquivos de estrutura de dados, conexão com banco, validações
+    database.py      
+    models.py        
+    schemas.py       
+  services/          # pasta com a lógica de negócio, autenticação, análise de sentimentos, etc
+    auth.py            
+    config.py        
+    deps.py            
+    sentiment.py
+  view/              # pasta com a interface do projeto
+    css/             # pasta com os arquivos de desing da interface do projeto
+      styles.css
+    html/            # pasta com os arquivos de interface html do projeto
+      history.html
+      login.html
+      post.html
+      register.html
+      reset.html
+      result.html
+      save.html
+    js/              # pasta com os arquivos de logica da interface do projeto
+      app.js
+  main.py            # arquivo de execução do projeto
 ```
 
 ## Próximos passos
@@ -73,3 +86,13 @@ app/
 
 >- ESSE É UM FLUXO OPCIONAL, PODEM ALTERAR MAS AVISE AS MUDANÇAS NESSE READ ME PRO PROXIMO SABER 
 - OS PROXIMOS PASSOS SAO IDEIAS DE UMA IA.
+
+
+## Mudanças | Atualizações
+```
+* Para alteração de versão, seguir a seguinte logica:
+  - Primeiro número: Mudanças grandes no projeto.
+  - Segundo número: Adição de funcionalidades
+  - Terceiro número: Correções pequenas ou bugs
+```
+  - v1.0.0 - Mudança na estrutura do projeto para uma estrutura MVC, desta forma melhorando a visualização e manutenções futuras.

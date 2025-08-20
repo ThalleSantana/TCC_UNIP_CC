@@ -5,40 +5,45 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 
-from .database import Base, engine
-from .routers import users, posts, analysis
+from .model.database import Base, engine
+from .controller import users, posts, analysis
 
-# 1) Cria a app ANTES de usar app.*
 app = FastAPI(title="Sentiment Analysis MVP", version="0.1.0")
 
-# 2) CORS (útil no dev)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # ajusta SE quiser restringir
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 3) Monta o diretório do frontend (caminho absoluto)
-FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
-app.mount("/frontend", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
+# ✅ Novo caminho para os arquivos HTML
+BASE_VIEW_DIR = Path(__file__).resolve().parent / "view"
+FRONTEND_DIR = Path(__file__).parent / "view" / "html"
 
-# 4) Banco e rotas
+# HTML
+app.mount("/frontend", StaticFiles(directory=str(BASE_VIEW_DIR / "html"), html=True), name="frontend")
+
+# CSS
+app.mount("/css", StaticFiles(directory=str(BASE_VIEW_DIR / "css")), name="css")
+
+# JS
+app.mount("/js", StaticFiles(directory=str(BASE_VIEW_DIR / "js")), name="js")
+
 Base.metadata.create_all(bind=engine)
 app.include_router(users.router)
 app.include_router(posts.router)
 app.include_router(analysis.router)
 
-# 5) Rotas utilitárias
 @app.get("/health")
 def health():
     return {"status": "ok", "frontend_dir": str(FRONTEND_DIR)}
 
+# ✅ Redireciona para login.html
 @app.get("/")
 def root():
-    return RedirectResponse(url="/frontend/")  # abre o index.html
+    return RedirectResponse(url="/frontend/login.html")
 
-# (opcional) listar rotas para debug
 @app.get("/_routes")
 def list_routes():
     return [getattr(r, "path", None) for r in app.routes]
