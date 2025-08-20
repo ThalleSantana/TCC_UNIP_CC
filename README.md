@@ -96,3 +96,6 @@ app/
   - Terceiro número: Correções pequenas ou bugs
 ```
   - v1.0.0 - Mudança na estrutura do projeto para uma estrutura MVC, desta forma melhorando a visualização e manutenções futuras.
+
+  - v1.0.1 - Ajuste no arquivo app.js alterei a linha 41, estava "index" e alterei para "post" porque não estava encontrando o link
+  

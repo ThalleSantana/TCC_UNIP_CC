@@ -38,7 +38,7 @@ async function handleLogin(email, password) {
   }
   const data = await res.json();
   setToken(data.access_token);
-  window.location.href = "/frontend/index.html";
+  window.location.href = "/frontend/post.html";
 }
 
 /* ---------------------------
@@ -105,7 +105,7 @@ async function loadResult() {
   const id = localStorage.getItem("last_analysis_id");
   if (!id) return;
 
-  const res = await fetch(`/analysis/${id}`, { headers: { ...authHeaders() }});
+  const res = await fetch(`/analysis/${id}`, { headers: { ...authHeaders() } });
   if (!res.ok) {
     if (res.status === 401) return (window.location.href = "/frontend/login.html");
     const err = await safeJson(res);
@@ -116,7 +116,7 @@ async function loadResult() {
 
   // Contadores
   putText("[data-count-positive]", data.summary_positive);
-  putText("[data-count-neutral]",  data.summary_neutral);
+  putText("[data-count-neutral]", data.summary_neutral);
   putText("[data-count-negative]", data.summary_negative);
 
   // Comentários
@@ -135,7 +135,7 @@ async function loadResult() {
    HISTÓRICO
 --------------------------- */
 async function loadHistory() {
-  const res = await fetch(`/analysis/`, { headers: { ...authHeaders() }});
+  const res = await fetch(`/analysis/`, { headers: { ...authHeaders() } });
   if (!res.ok) {
     if (res.status === 401) return (window.location.href = "/frontend/login.html");
     const err = await safeJson(res);
@@ -211,10 +211,10 @@ document.addEventListener("DOMContentLoaded", () => {
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const first_name = form.first_name.value.trim();
-        const last_name  = form.last_name.value.trim();
-        const email      = form.email.value.trim();
-        const password   = form.password.value;
-        const confirm    = form.confirm_password.value;
+        const last_name = form.last_name.value.trim();
+        const email = form.email.value.trim();
+        const password = form.password.value;
+        const confirm = form.confirm_password.value;
         if (password !== confirm) return alert("As senhas não coincidem!");
         try { await handleRegister(first_name, last_name, email, password); }
         catch (err) { alert(err.message); }
