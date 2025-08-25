@@ -10,40 +10,62 @@
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body class="bg-gray-50" data-page="register">
-  <div class="min-h-screen flex items-center justify-center px-6">
-    <div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-md space-y-6">
-      <h1 class="text-3xl font-bold text-gray-800 text-center">Criar Conta</h1>
-      <p class="text-gray-500 text-center">Preencha os campos abaixo para se cadastrar.</p>
-
-      <form class="space-y-4" id="register-form">
-        <div>
-          <label for="first-name" class="block text-sm font-medium text-gray-700">Nome</label>
-          <input type="text" id="first-name" name="first_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]" required>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen" data-page="register">
+  <div class="w-full max-w-6xl mx-auto p-8 lg:p-12">
+    <div class="grid lg:grid-cols-2 gap-0 items-stretch h-full">
+      <div class="flex flex-col items-center justify-center text-center h-full bg-[var(--primary-color)] text-white p-12 rounded-l-2xl">
+        <div class="flex items-center gap-3 mb-6">
+          <h1 class="text-4xl font-bold text-white">EmoSync</h1>
         </div>
-        <div>
-          <label for="last-name" class="block text-sm font-medium text-gray-700">Sobrenome</label>
-          <input type="text" id="last-name" name="last_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]" required>
-        </div>
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
-          <input type="email" id="email" name="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]" required>
-        </div>
-        <div>
-          <label for="password" class="block text-sm font-medium text-gray-700">Senha</label>
-          <input type="password" id="password" name="password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]" required>
-        </div>
-        <div>
-          <label for="confirm-password" class="block text-sm font-medium text-gray-700">Confirmar Senha</label>
-          <input type="password" id="confirm-password" name="confirm_password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[var(--primary-color)] focus:ring-[var(--primary-color)]" required>
-        </div>
-        <button type="submit" class="w-full py-2 px-4 bg-[var(--primary-color)] hover:bg-blue-700 text-white rounded-md shadow">Cadastrar</button>
-      </form>
-
-      <p class="text-center text-sm text-gray-500">
-        Já tem conta?
-        <a href="login.html" class="text-[var(--primary-color)] hover:underline">Entrar</a>
-      </p>
+        <p class="text-xl text-white">Software de Análise de Sentimento em Redes Sociais.</p>
+      </div>
+      <div class="bg-white p-8 sm:p-12 rounded-r-2xl shadow-lg h-full">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Cadastro de Usuário</h2>
+        <form class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700" for="email">Email</label>
+            <div class="mt-1">
+              <input type="email" id="email" name="email" class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] sm:text-sm" required/>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700" for="first-name">Nome</label>
+              <div class="mt-1">
+                <input type="text" id="first-name" name="first_name" class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] sm:text-sm" required/>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700" for="last-name">Sobrenome</label>
+              <div class="mt-1">
+                <input type="text" id="last-name" name="last_name" class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] sm:text-sm" required/>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700" for="password">Senha</label>
+            <div class="mt-1">
+              <input type="password" id="password" name="password" class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] sm:text-sm" required/>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700" for="password-confirm">Confirmar Senha</label>
+            <div class="mt-1">
+              <input type="password" id="confirm-password" name="confirm_password" class="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[var(--primary-color)] focus:border-[var(--primary-color)] sm:text-sm" required/>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-4 pt-4">
+            <button class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[var(--primary-color)] hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)]" type="submit">
+              Cadastrar
+            </button>
+            <a href="login.html" class="w-full">
+              <button class="w-full flex justify-center py-3 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" type="button">
+                Cancelar
+              </button>
+            </a>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 

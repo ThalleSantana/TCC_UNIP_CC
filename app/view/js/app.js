@@ -115,20 +115,107 @@ async function loadResult() {
   const data = await res.json();
 
   // Contadores
-  putText("[data-count-positive]", data.summary_positive);
-  putText("[data-count-neutral]", data.summary_neutral);
-  putText("[data-count-negative]", data.summary_negative);
+  const positive = data.summary_positive;
+  const neutral = data.summary_neutral;
+  const negative = data.summary_negative;
+  const total = positive + neutral + negative;
+
+  // Atualiza o total
+  document.getElementById("totalCount").textContent = `Total: ${total}`;
+
+  // Cria o gráfico
+  const ctx = document.getElementById("sentimentChart").getContext("2d");
+  new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: [
+        `Positivos (${((positive / total) * 100).toFixed(1)}%)`,
+        `Neutros (${((neutral / total) * 100).toFixed(1)}%)`,
+        `Negativos (${((negative / total) * 100).toFixed(1)}%)`
+      ],
+      datasets: [{
+        data: [positive, neutral, negative],
+        backgroundColor: ["#22c55e", "#facc15", "#ef4444"],
+        borderColor: "#fff",
+        borderWidth: 2
+      }]
+    },
+    options: {
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            color: "#374151",
+            font: {
+              size: 14
+            }
+          }
+        }
+      }
+    }
+  });
 
   // Comentários
-  const list = qs("[data-comments]");
-  if (list) {
-    list.innerHTML = "";
-    (data.comments || []).forEach(c => {
-      const li = document.createElement("li");
-      li.textContent = `[${c.label}] ${c.text}`;
-      list.appendChild(li);
-    });
+  const positiveBox = qs("[data-comments-positive] .mt-4");
+  const neutralBox = qs("[data-comments-neutral] .mt-4");
+  const negativeBox = qs("[data-comments-negative] .mt-4");
+
+  [positiveBox, neutralBox, negativeBox].forEach(box => box.innerHTML = "");
+
+  (data.comments || []).forEach(c => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "flex items-center gap-3 rounded-md bg-surface-secondary p-3";
+
+    const icon = document.createElement("span");
+    icon.className = "h-6 w-6";
+    icon.innerHTML = getIcon(c.label);
+
+    const text = document.createElement("span");
+    text.className = "font-medium text-text-primary";
+    text.textContent = c.text;
+
+    wrapper.appendChild(icon);
+    wrapper.appendChild(text);
+
+    if (c.label === "positive") positiveBox.appendChild(wrapper);
+    else if (c.label === "neutral") neutralBox.appendChild(wrapper);
+    else if (c.label === "negative") negativeBox.appendChild(wrapper);
+  });
+}
+
+function getIcon(label) {
+  if (label === "positive") {
+    return `
+      <svg class="text-[var(--positive)]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+        <line x1="9" x2="9.01" y1="9" y2="9"></line>
+        <line x1="15" x2="15.01" y1="9" y2="9"></line>
+        <circle cx="12" cy="12" r="10"></circle>
+      </svg>`;
   }
+
+  if (label === "neutral") {
+    return `
+      <svg class="text-yellow-500" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="8" x2="16" y1="15" y2="15"></line>
+        <line x1="9" x2="9.01" y1="9" y2="9"></line>
+        <line x1="15" x2="15.01" y1="9" y2="9"></line>
+      </svg>`;
+  }
+
+  if (label === "negative") {
+  return `
+    <svg class="text-[var(--negative)]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path d="M8 15c1-1 2.5-1.5 4-1.5s3 .5 4 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="9" x2="9.01" y1="9" y2="9"></line>
+      <line x1="15" x2="15.01" y1="9" y2="9"></line>
+    </svg>
+  `;
+}
+
+  return "";
 }
 
 /* ---------------------------

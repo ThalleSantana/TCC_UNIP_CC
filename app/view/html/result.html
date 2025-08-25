@@ -9,53 +9,84 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body class="bg-gray-50" data-page="result">
-  <div class="min-h-screen flex flex-col items-center p-6">
-    <div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-3xl space-y-6">
-      <h1 class="text-3xl font-bold text-gray-800 text-center">Resultado da Análise</h1>
-      <p class="text-gray-500 text-center">Veja abaixo o resumo e os comentários analisados.</p>
-
-      <!-- Resumo -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-        <div class="bg-green-100 p-4 rounded-lg shadow">
-          <h2 class="text-lg font-semibold text-green-700">Positivos</h2>
-          <p class="text-2xl font-bold text-green-900" data-count-positive>0</p>
-        </div>
-        <div class="bg-yellow-100 p-4 rounded-lg shadow">
-          <h2 class="text-lg font-semibold text-yellow-700">Neutros</h2>
-          <p class="text-2xl font-bold text-yellow-900" data-count-neutral>0</p>
-        </div>
-        <div class="bg-red-100 p-4 rounded-lg shadow">
-          <h2 class="text-lg font-semibold text-red-700">Negativos</h2>
-          <p class="text-2xl font-bold text-red-900" data-count-negative>0</p>
-        </div>
-      </div>
-
-      <!-- Lista de comentários -->
+<body class="bg-[var(--bg-color)]" style='font-family: "Spline Sans", "Noto Sans", sans-serif;' data-page="result">
+  <div class="flex min-h-screen">
+    <aside class="w-64 bg-[var(--sidebar-bg)] shadow-md flex flex-col justify-between p-4">
       <div>
-        <h2 class="text-xl font-semibold text-gray-800 mb-3">Comentários</h2>
-        <ul class="space-y-2" data-comments>
-          <!-- Comentários serão inseridos pelo JS -->
-        </ul>
+        <h1 class="text-[var(--text-color)] text-2xl font-bold mb-8 text-center">EmoSync</h1>
+        <nav class="flex flex-col gap-2">
+          <a class="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-gray-100 text-[var(--text-color)] font-medium" href="post.html">
+            <svg fill="none" height="24" width="24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Analisar</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-3 rounded-md bg-[var(--sidebar-active-bg)] text-[var(--text-color)] font-semibold" href="history.html">
+            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+              <path d="M12 6v6l4 2"></path>
+            </svg>
+            <span>Histórico</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-gray-100 text-[var(--text-color)] font-medium" href="save.html">
+            <svg fill="none" height="24" width="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            <span>Salvar</span>
+          </a>
+        </nav>
       </div>
-
-      <!-- Botões de navegação -->
-      <div class="flex justify-between pt-4">
-        <button onclick="window.location.href='post.html'"
-          class="py-2 px-4 bg-gray-200 hover:bg-gray-300 rounded-md shadow">
-          Nova Análise
-        </button>
-        <button onclick="window.location.href='history.html'"
-          class="py-2 px-4 bg-[var(--primary-color)] hover:bg-blue-700 text-white rounded-md shadow">
-          Ver Histórico
-        </button>
+      <div class="flex flex-col">
+        <a onclick="handleLogout()" href="login.html" class="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-gray-100 text-[var(--text-color)] font-medium">
+          <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" x2="9" y1="12" y2="12"></line>
+          </svg>
+          <span>Sair</span>
+        </a>
       </div>
-    </div>
+    </aside>
+    <main class="flex flex-1 items-center justify-center">
+      <div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-3xl space-y-6">
+        <h1 class="text-3xl font-bold text-gray-800 text-center">Resultado da Análise</h1>
+        <p class="text-gray-500 text-center">Veja abaixo o resumo e os comentários analisados.</p>
+        <div class="flex flex-col lg:flex-row gap-8 items-center lg:items-start justify-center">
+          <!-- Gráfico à esquerda -->
+          <div class="bg-white p-4 rounded-lg shadow text-center flex flex-col items-center justify-center">
+            <h2 class="text-xl font-semibold mb-2">Resumo das Emoções</h2>
+            <canvas id="sentimentChart" width="300" height="300"></canvas>
+            <p class="mt-4 text-gray-700 text-sm" id="totalCount">Total: 0</p>
+          </div>
+          <!-- Comentários à direita -->
+          <div class="flex flex-col gap-6 w-full max-w-xl">
+            <!-- Comentários Positivos -->
+            <div class="rounded-md border border-border-color bg-surface-primary p-6 shadow-sm" data-comments-positive>
+              <h3 class="text-lg font-semibold text-text-primary">Palavras Positivas</h3>
+              <div class="mt-4 space-y-3"></div>
+            </div>
+            <!-- Comentários Neutros -->
+            <div class="rounded-md border border-border-color bg-surface-primary p-6 shadow-sm" data-comments-neutral>
+              <h3 class="text-lg font-semibold text-text-primary">Palavras Neutras</h3>
+              <div class="mt-4 space-y-3"></div>
+            </div>
+            <!-- Comentários Negativos -->
+            <div class="rounded-md border border-border-color bg-surface-primary p-6 shadow-sm" data-comments-negative>
+              <h3 class="text-lg font-semibold text-text-primary">Palavras Negativas</h3>
+              <div class="mt-4 space-y-3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
-
   <script src="../js/app.js?v=1.0"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>

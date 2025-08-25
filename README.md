@@ -9,7 +9,7 @@ envio de link da postagem e um fluxo de **análise mock** (pode plugar uma API r
 1) Crie e ative um ambiente virtual (opcional mas é melhorr):
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+source .venv/Scripts/activate   # Windows: .venv\Scripts\activate
 ```
 
 2) Instale dependências:
@@ -98,4 +98,6 @@ app/
   - v1.0.0 - Mudança na estrutura do projeto para uma estrutura MVC, desta forma melhorando a visualização e manutenções futuras.
 
   - v1.0.1 - Ajuste no arquivo app.js alterei a linha 41, estava "index" e alterei para "post" porque não estava encontrando o link
+
+  - v1.1.0 - Adição de botões (navbar) para navegação entre as telas, pequenas mudanças na interface do sistema
   
