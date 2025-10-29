@@ -100,4 +100,6 @@ app/
   - v1.0.1 - Ajuste no arquivo app.js alterei a linha 41, estava "index" e alterei para "post" porque não estava encontrando o link
 
   - v1.1.0 - Adição de botões (navbar) para navegação entre as telas, pequenas mudanças na interface do sistema
+
+  - v2.0.0 - Adição dos códigos de captura de comentários e analise de sentimento, e ajuste no register.html, pois não estava realizando o cadastro
   
