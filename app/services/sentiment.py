@@ -1,5 +1,7 @@
+# sentiment.py
 from abc import ABC, abstractmethod
 from typing import List, Tuple
+from ..services import sentiment_analysis
 
 class SentimentProvider(ABC):
     @abstractmethod
@@ -18,5 +20,3 @@ class MockSentimentProvider(SentimentProvider):
             else:
                 results.append(("neutral", 50))
         return results
-
-# Futuro: implemente um provider real (HuggingFace, GCP, Azure...)

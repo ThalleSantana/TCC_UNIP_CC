@@ -58,12 +58,10 @@
           <p class="text-gray-500 text-center">
             Sua análise foi concluída. Você pode salvar uma anotação/título para encontrá-la depois no histórico.
           </p>
-          <!-- ID da última análise (preenchido via JS) -->
           <div class="bg-gray-50 border border-gray-200 rounded-md p-4">
             <span class="block text-sm text-gray-600">ID da Análise</span>
             <code class="text-base font-mono" id="analysis-id">—</code>
           </div>
-          <!-- Formulário simples de anotação local (não precisa de API nova) -->
           <form id="save-form" class="space-y-4">
             <div>
               <label for="note" class="block text-sm font-medium text-gray-700">Título/Anotação (opcional)</label>
@@ -77,16 +75,11 @@
       </div>
     </main>
   </div>
-  <!-- Carrega o JS com cache-busting -->
   <script src="../js/app.js?v=1.0"></script>
   <script>
-    // Pequeno script local só para mostrar o ID e guardar a anotação no localStorage.
-    // (Não cria API nova — seu histórico oficial vem da própria API /analysis/)
     document.addEventListener('DOMContentLoaded', () => {
       const id = localStorage.getItem('last_analysis_id');
       document.getElementById('analysis-id').textContent = id || '—';
-
-      // Carrega/salva uma notinha local (chave: note:<id>)
       const key = id ? `note:${id}` : null;
       const input = document.getElementById('note');
       if (key) {

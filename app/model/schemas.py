@@ -15,6 +15,14 @@ class LoginRequest(BaseModel):
     email: EmailStr
     password: str
 
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+
+class ResetPasswordConfirm(BaseModel):
+    token: str
+    new_password: str
+
 class AnalyzeRequest(BaseModel):
     platform: str
     url: HttpUrl

@@ -103,3 +103,34 @@ app/
 
   - v2.0.0 - Adição dos códigos de captura de comentários e analise de sentimento, e ajuste no register.html, pois não estava realizando o cadastro
   
+
+## Redefinição de senha por e-mail
+
+Endpoints:
+- `POST /auth/reset-password` { "email": "user@dominio.com" }
+- `POST /auth/reset-password-confirm` { "token": "...", "new_password": "..." }
+
+Configurar SMTP por variáveis de ambiente:
+
+```
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=seuemail@gmail.com
+SMTP_PASS=senha_ou_app_password
+EMAIL_FROM=EmoSync <seuemail@gmail.com>
+FRONTEND_BASE_URL=http://127.0.0.1:8000/frontend
+```
+
+## Banco de dados
+
+Defina `DATABASE_URL` para usar um banco real:
+
+- PostgreSQL:
+  `DATABASE_URL=postgresql+psycopg2://usuario:senha@localhost:5432/emosync`
+
+- MySQL:
+  `DATABASE_URL=mysql+pymysql://usuario:senha@localhost:3306/emosync`
+
+Se `DATABASE_URL` não for definido, usa `sqlite:///./app.db`.
+
+Ao trocar para um banco novo, as tabelas são criadas automaticamente com as novas colunas (`reset_token`, `reset_token_expires`).

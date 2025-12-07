@@ -1,74 +1,54 @@
-# Imports das bibliotecas
-from googleapiclient.discovery import build
-import pandas as pd
 import re
-import os
+import pandas as pd
+from googleapiclient.discovery import build
 
-key = os.getenv("YOUTUBE_KEY")
-link = '' # Conectar com o a parte de envio de url
-
-# Função comentarios Youtube
-def api_youtube(link, access_token):
-  url = link
-  api_key = access_token
-  
-  def extrair_id_url(url):
-    # Tenta extrair ID de vídeo padrão (v=...)
+def extrair_id_url(url) -> str:
+    url = str(url)
     match = re.search(r"[?&]v=([a-zA-Z0-9_-]{11})", url)
     if match:
-      return match.group(1)
-    
-    # Tenta extrair ID de Shorts (/shorts/...)
-    match = re.search(r"/shorts/([a-zA-Z0-9_-]{11})", url)
+        return match.group(1)
+    match = re.search(r"youtu\.be/([a-zA-Z0-9_-]{11})", url)
     if match:
-      return match.group(1)
-    return None
-  
-  video_id = extrair_id_url(url)
-  youtube = build('youtube', 'v3', developerKey = api_key)
+        return match.group(1)
+    raise ValueError(f"URL inválida: {url}")
 
-  def extrair_comentarios(video_id, youtube_client):
-    comentarios = []
-    token_pagina = None
 
-    while True:
-      response = youtube_client.commentThreads().list(
-          part = 'snippet',
-          videoId = video_id,
-          maxResults = 100,
-          pageToken = token_pagina,
-          textFormat = 'plainText'
-        ).execute()
-
-      for item in response['items']:
-        comentario = item['snippet']['topLevelComment']['snippet']
-        comentarios.append({
-          'author': comentario['authorDisplayName'],
-          'text': comentario['textDisplay'],
-          'published_at': comentario['publishedAt'],
-          'like_count' : comentario['likeCount']
-        })
-
-      token_pagina = response.get('nextPageToken')
-      if not token_pagina:
-        break
-
-    return pd.DataFrame(comentarios)
-    
-  def verificar_video(video_id, youtube_client):
-    response = youtube_client.videos().list(
-      part = 'snippet',
-      id = video_id
+def verificar_video(video_id: str, youtube):
+    """
+    Verifica se o vídeo existe usando a API do YouTube.
+    """
+    return youtube.videos().list(
+        part="snippet",
+        id=video_id
     ).execute()
-    return len(response["items"]) > 0
-  
-  if verificar_video(video_id, youtube):
-    df_origem = extrair_comentarios(video_id, youtube)
-    return pd.DataFrame(df_origem)
-  else:
-    print("Video não encontrado ou ID invalido")
 
-df = api_youtube(link, key)
+def api_youtube(url: str, api_key: str):
+    """
+    Conecta na API do YouTube e retorna os comentários de um vídeo.
+    """
+    video_id = extrair_id_url(url)
+    youtube = build("youtube", "v3", developerKey=api_key)
 
-def df_comentarios():
-  return df[['text']]
+    info = verificar_video(video_id, youtube)
+    if not info["items"]:
+        raise ValueError("Vídeo não encontrado.")
+
+    comments = []
+    request = youtube.commentThreads().list(
+        part="snippet",
+        videoId=video_id,
+        maxResults=50
+    )
+    response = request.execute()
+
+    for item in response.get("items", []):
+        text = item["snippet"]["topLevelComment"]["snippet"]["textDisplay"]
+        comments.append(text)
+
+    return pd.DataFrame({"text": comments})
+
+def df_comentarios(url: str, api_key: str):
+    """
+    Wrapper que retorna um DataFrame com os comentários do vídeo.
+    """
+    return api_youtube(url, api_key)

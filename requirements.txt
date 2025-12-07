@@ -10,3 +10,6 @@ google-api-python-client
 pandas
 openai
 tiktoken
+psycopg
+PyMySQL
+python-dotenv
