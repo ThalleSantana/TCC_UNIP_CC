@@ -6,3 +6,10 @@ passlib[bcrypt]
 python-jose[cryptography]
 pydantic[email]
 httpx
+google-api-python-client
+pandas
+openai
+tiktoken
+psycopg
+PyMySQL
+python-dotenv

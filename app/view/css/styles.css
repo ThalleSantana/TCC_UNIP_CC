@@ -1,0 +1,35 @@
+/* css/styles.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #3d99f5;
+  --primary-color-hover: #2c88e4;
+  --text-color: #0d141c;
+  --bg-color: #f8fafc;
+  --sidebar-bg: #ffffff;
+  --sidebar-active-bg: #eef2f9;
+  --input-border: #cbd5e1;
+  --input-focus-border: #3d99f5;
+  --placeholder-color: #94a3b8;
+  --button-text-color: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --background-color: #f9fafb;
+  --form-bg-color: #ffffff;
+  --form-border-color: #d1d5db;
+  --form-focus-ring-color: #3d99f5;
+  --brand-primary: #3d99f5;
+  --brand-secondary: #e7f2fe;
+  --surface-primary: #ffffff;
+  --surface-secondary: #f9fafb;
+  --border-color: #e5e7eb;
+  --positive: #10b981;
+  --neutral: #3b82f6;
+  --negative: #ef4444;
+}
+
+body {
+  font-family: 'Spline Sans', sans-serif;
+}

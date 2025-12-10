@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EmoSync - Análise YouTube</title>
+  <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --primary-color-hover: #1d4ed8;
+      --bg-color: #f9fafb;
+      --sidebar-bg: #ffffff;
+      --sidebar-active-bg: #eff6ff;
+      --text-color: #1e293b;
+      --button-text-color: #ffffff;
+      --input-border: #cbd5e1;
+      --input-focus-border: #2563eb;
+      --placeholder-color: #94a3b8;
+    }
+    body {
+      font-family: "Spline Sans", "Noto Sans", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+    input[type="radio"] {
+      accent-color: var(--primary-color);
+    }
+    button {
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      filter: brightness(0.95);
+    }
+    aside {
+      border-right: 1px solid #e2e8f0;
+    }
+    .shadow-lg {
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+    .rounded-md {
+      border-radius: 0.5rem;
+    }
+    .rounded-lg {
+      border-radius: 0.75rem;
+    }
+  </style>
+  <link rel="stylesheet" href="/frontend/css/styles.css?v=3" />
+</head>
+<body class="bg-[var(--bg-color)]" style='font-family: "Spline Sans", "Noto Sans", sans-serif;' data-page="post">
+  <div class="flex min-h-screen">
+    <aside class="w-64 bg-[var(--sidebar-bg)] shadow-md flex flex-col justify-between p-4">
+      <div>
+        <h1 class="text-[var(--text-color)] text-2xl font-bold mb-8 text-center">EmoSync</h1>
+        <nav class="flex flex-col gap-2">
+          <a class="flex items-center gap-3 px-4 py-3 rounded-md bg-[var(--sidebar-active-bg)] text-[var(--text-color)] font-semibold" href="post.html">
+            <svg fill="none" height="24" width="24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Analisar</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-gray-100 text-[var(--text-color)] font-medium" href="history.html">
+            <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+              <path d="M12 6v6l4 2"></path>
+            </svg>
+            <span>Histórico</span>
+          </a>
+        </nav>
+      </div>
+      <div class="flex flex-col">
+        <a onclick="handleLogout()" href="login.html" class="flex items-center gap-3 px-4 py-3 rounded-md hover:bg-gray-100 text-[var(--text-color)] font-medium">
+          <svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" x2="9" y1="12" y2="12"></line>
+          </svg>
+          <span>Sair</span>
+        </a>
+      </div>
+    </aside>
+    <main class="flex-1 flex flex-col items-center justify-center p-6">
+      <div class="w-full max-w-2xl text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-[var(--text-color)] mb-2">Análise de Sentimentos no YouTube</h2>
+        <p class="text-lg text-gray-500 mb-10">Cole o link de um vídeo e descubra o sentimento dos comentários</p>
+        <div class="bg-white p-8 rounded-lg shadow-lg w-full">
+          <div class="mb-8">
+            <label class="block text-left text-sm font-medium text-gray-700 mb-2" for="youtube-link">Link do Vídeo</label>
+            <input
+              class="form-input w-full px-4 py-3 rounded-md border-[var(--input-border)] focus:ring-[var(--input-focus-border)] focus:border-[var(--input-focus-border)] placeholder:text-[var(--placeholder-color)] text-[var(--text-color)]"
+              id="post-url"
+              placeholder="https://www.youtube.com/watch?v=..."
+              type="url"
+              data-input="url"
+              required
+            />
+          </div>
+            <label style="display:none;">
+              <input type="hidden" name="platform" value="youtube" data-input="platform" />
+            </label>
+          <button data-action="analyze" class="w-full bg-[var(--primary-color)] hover:bg-[var(--primary-color-hover)] text-[var(--button-text-color)] font-bold py-3 px-4 rounded-md text-lg transition-colors duration-300">
+            Analisar Comentários
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="/frontend/js/app.js?v=1.0"></script>
+</body>
+</html>
