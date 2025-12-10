@@ -1,17 +1,5 @@
-/* ============================
-   EmoSync — frontend/js/app.js
-   ============================ */
+console.log("✅ app.js carregado com sucesso");
 
-/*  ✅ Importante:
-    - Usamos URLs RELATIVAS nos fetch() (ex.: "/auth/login").
-      Assim, funciona em qualquer porta (8000, 8001, etc.).
-    - Se quiser forçar versão e evitar cache, carregue no HTML:
-      <script src="./js/app.js?v=3"></script>
-*/
-
-/* ---------------------------
-   Helpers de Autenticação
---------------------------- */
 const tokenKey = "emo_token";
 
 function setToken(t) { localStorage.setItem(tokenKey, t); }
@@ -32,14 +20,21 @@ async function handleLogin(email, password) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password })
   });
+
   if (!res.ok) {
     const err = await safeJson(res);
     throw new Error(err.detail || "Login inválido");
   }
+
   const data = await res.json();
+  console.log("LOGIN RESPONSE ===>", data);
+
+  // ✅ salva token e redireciona
   setToken(data.access_token);
-  window.location.href = "/frontend/post.html";
+  window.location.href = "/frontend/html/post.html";
 }
+
+
 
 /* ---------------------------
    REGISTRO
@@ -55,7 +50,7 @@ async function handleRegister(first_name, last_name, email, password) {
     throw new Error(err.detail || "Erro ao cadastrar");
   }
   alert("Cadastro realizado! Faça login para continuar.");
-  window.location.href = "/frontend/login.html";
+  window.location.href = "/frontend/html/login.html";
 }
 
 /* ---------------------------
@@ -67,36 +62,78 @@ async function handleResetRequest(email) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email })
   });
-  // Por segurança, backend retorna a mesma msg exista ou não o e-mail
   if (!res.ok) {
     const err = await safeJson(res);
     throw new Error(err.detail || "Erro ao solicitar redefinição.");
   }
   alert("Se este e-mail estiver cadastrado, você receberá as instruções.");
-  window.location.href = "/frontend/login.html";
+  window.location.href = "/frontend/html/login.html";
 }
 
-/* ---------------------------
-   ANALISAR POST
---------------------------- */
-async function handleAnalyze(platform, url) {
-  const res = await fetch(`/posts/analyze`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeaders() },
-    body: JSON.stringify({ platform, url })
-  });
-  if (!res.ok) {
-    if (res.status === 401) {
-      alert("Faça login para continuar.");
-      return (window.location.href = "/frontend/login.html");
-    }
-    const err = await safeJson(res);
-    throw new Error(err.detail || "Falha ao analisar");
-  }
-  const data = await res.json();
-  localStorage.setItem("last_analysis_id", data.analysis_id);
-  window.location.href = "/frontend/result.html";
+/* ============================
+   Analise
+============================ */
+
+async function safeJson(res) {
+    try { return await res.json(); }
+    catch { return {}; }
 }
+
+async function handleAnalyze(url) {
+  try {
+    console.log("[handleAnalyze] Enviando para /posts/analyze:", url);
+    console.log("Payload enviado:", JSON.stringify({ url }));
+
+    const res = await fetch("/posts/analyze", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...authHeaders() },
+      body: JSON.stringify({ url, platform: "youtube" })
+    });
+
+    const data = await safeJson(res);
+    console.log("[/posts/analyze retorno]", data);
+
+    if (!res.ok) {
+      console.error("Erro na requisição:", {
+        status: res.status,
+        statusText: res.statusText,
+        body: data
+      });
+
+      return;
+    }
+
+    localStorage.setItem("last_analysis_id", data.analysis_id);
+
+    localStorage.setItem("analysis_data", JSON.stringify(data.summary));
+
+    window.location.href = "/frontend/html/result.html";
+
+  } catch (e) {
+    console.error("Erro na análise (catch):", e);
+    alert("Erro inesperado ao analisar.");
+  }
+}
+
+/* ======== Botão Analisar ======== */
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.querySelector("[data-action='analyze']");
+  btn.onclick = () => {
+    let url = document.getElementById("post-url").value.trim();
+
+    if (!url.startsWith("http")) {
+      url = "https://" + url;
+    }
+
+    const isValidYoutube = /^https?:\/\/(www\.)?(youtube\.com|youtu\.be)\/.+/.test(url);
+    if (!isValidYoutube) {
+      alert("Insira um link válido do YouTube.");
+      return;
+    }
+
+    handleAnalyze(url);
+  };
+});
 
 /* ---------------------------
    CARREGAR RESULTADO
@@ -107,23 +144,20 @@ async function loadResult() {
 
   const res = await fetch(`/analysis/${id}`, { headers: { ...authHeaders() } });
   if (!res.ok) {
-    if (res.status === 401) return (window.location.href = "/frontend/login.html");
+    if (res.status === 401) return (window.location.href = "/frontend/html/login.html");
     const err = await safeJson(res);
     console.warn("Erro ao carregar resultado:", err);
     return;
   }
   const data = await res.json();
 
-  // Contadores
   const positive = data.summary_positive;
   const neutral = data.summary_neutral;
   const negative = data.summary_negative;
   const total = positive + neutral + negative;
 
-  // Atualiza o total
   document.getElementById("totalCount").textContent = `Total: ${total}`;
 
-  // Cria o gráfico
   const ctx = document.getElementById("sentimentChart").getContext("2d");
   new Chart(ctx, {
     type: "pie",
@@ -155,7 +189,6 @@ async function loadResult() {
     }
   });
 
-  // Comentários
   const positiveBox = qs("[data-comments-positive] .mt-4");
   const neutralBox = qs("[data-comments-neutral] .mt-4");
   const negativeBox = qs("[data-comments-negative] .mt-4");
@@ -222,9 +255,19 @@ function getIcon(label) {
    HISTÓRICO
 --------------------------- */
 async function loadHistory() {
+  const token = getToken();
+  if (!token) {
+    window.location.href = "/frontend/html/login.html";
+    return;
+  }
+
   const res = await fetch(`/analysis/`, { headers: { ...authHeaders() } });
   if (!res.ok) {
-    if (res.status === 401) return (window.location.href = "/frontend/login.html");
+    if (res.status === 401) {
+      clearToken();
+      window.location.href = "/frontend/html/login.html";
+      return;
+    }
     const err = await safeJson(res);
     console.warn("Erro ao carregar histórico:", err);
     return;
@@ -237,8 +280,6 @@ async function loadHistory() {
   data.forEach(row => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
-      <td class="px-4 py-3 text-sm text-gray-700">${row.id}</td>
-      <td class="px-4 py-3 text-sm text-gray-700 capitalize">${row.platform}</td>
       <td class="px-4 py-3 text-sm text-blue-600 truncate max-w-[280px]">
         <a href="${row.url}" target="_blank" class="hover:underline">${row.url}</a>
       </td>
@@ -257,9 +298,10 @@ async function loadHistory() {
     if (!btn) return;
     const id = btn.getAttribute("data-goto-result");
     localStorage.setItem("last_analysis_id", id);
-    window.location.href = "/frontend/result.html";
+    window.location.href = "/frontend/html/result.html";
   });
 }
+
 
 /* ---------------------------
    UTILITÁRIOS DOM/Fetch
@@ -279,7 +321,6 @@ async function safeJson(res) {
    LISTENERS POR PÁGINA
 --------------------------- */
 document.addEventListener("DOMContentLoaded", () => {
-  /* LOGIN */
   const loginForm = qs("[data-form='login']");
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
@@ -287,7 +328,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const email = loginForm.querySelector("input[name='email']").value.trim();
       const password = loginForm.querySelector("input[name='password']").value;
       try { await handleLogin(email, password); }
-      catch (err) { alert(err.message); }
+      catch (err) { 
+      }
     });
   }
 
@@ -304,7 +346,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const confirm = form.confirm_password.value;
         if (password !== confirm) return alert("As senhas não coincidem!");
         try { await handleRegister(first_name, last_name, email, password); }
-        catch (err) { alert(err.message); }
+        catch (err) { 
+        }
       });
     }
   }
@@ -317,22 +360,32 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         const email = form.email.value.trim();
         try { await handleResetRequest(email); }
-        catch (err) { alert(err.message); }
+        catch (err) { 
+        }
       });
     }
   }
 
   /* HOME / ANALISAR */
-  const analyzeBtn = qs("[data-action='analyze']");
-  if (analyzeBtn) {
-    analyzeBtn.addEventListener("click", async () => {
-      const url = qs("[data-input='url']").value.trim();
-      const platform = document.querySelector("[data-input='platform']:checked")?.value || "youtube";
-      if (!url) return alert("Cole o link da postagem.");
-      try { await handleAnalyze(platform, url); }
-      catch (err) { alert(err.message); }
-    });
-  }
+const analyzeBtn = qs("[data-action='analyze']");
+if (analyzeBtn) {
+  analyzeBtn.addEventListener("click", async () => {
+    const url = qs("[data-input='url']").value.trim();
+
+    const platformInput = document.querySelector("[data-input='platform']");
+    const platform = platformInput ? platformInput.value : "youtube";
+
+    if (!url) return alert("Cole o link do vídeo do YouTube.");
+
+    try {
+      await handleAnalyze(platform, url);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Erro ao analisar comentários do YouTube.");
+    }
+  });
+}
+
 
   /* RESULT */
   if (document.body.matches("[data-page='result']")) {
@@ -349,6 +402,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const btn = e.target.closest("[data-action='logout']");
     if (!btn) return;
     clearToken();
-    window.location.href = "/frontend/login.html";
+    window.location.href = "/frontend/html/login.html";
   });
 });
+
+/* ---------------------------
+   REDEFINIÇÃO DE SENHA (confirmação)
+--------------------------- */
+async function handleResetConfirm(token, new_password){
+  const res = await fetch(`/auth/reset-password-confirm`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, new_password })
+  });
+  if(!res.ok){
+    const err = await safeJson(res);
+    throw new Error(err.detail || "Erro ao redefinir senha.");
+  }
+  return await res.json();
+}

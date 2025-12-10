@@ -34,17 +34,23 @@ def api_youtube(url: str, api_key: str):
         raise ValueError("Vídeo não encontrado.")
 
     comments = []
-    request = youtube.commentThreads().list(
-        part="snippet",
-        videoId=video_id,
-        maxResults=50
-    )
-    response = request.execute()
+    token_pagina = None
 
-    for item in response.get("items", []):
-        text = item["snippet"]["topLevelComment"]["snippet"]["textDisplay"]
-        comments.append(text)
-
+    while True:
+        request = youtube.commentThreads().list(
+            part="snippet",
+            videoId=video_id,
+            maxResults=100,
+            pageToken=token_pagina,
+            textFormat='plainText'
+        )
+        response = request.execute()
+        for item in response.get("items", []):
+            text = item["snippet"]["topLevelComment"]["snippet"]["textDisplay"]
+            comments.append(text)
+        token_pagina = response.get('nextPageToken')
+        if not token_pagina:
+            break
     return pd.DataFrame({"text": comments})
 
 def df_comentarios(url: str, api_key: str):
